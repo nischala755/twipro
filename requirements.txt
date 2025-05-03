@@ -4,7 +4,3 @@ pandas
 matplotlib
 pillow
 reportlab
-os
-pickle
-time
-datetime
