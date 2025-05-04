@@ -154,7 +154,21 @@ def generate_pdf_report(username, image, classification, analysis, enhanced=Fals
     styles = getSampleStyleSheet()
     story = []
     
-    # Create custom styles with unique names to avoid conflicts
+    # Add custom styles if they don't exist
+    if 'Heading1' not in styles:
+        styles.add(ParagraphStyle(name='Heading1', 
+                                fontName='Helvetica-Bold',
+                                fontSize=18, 
+                                spaceAfter=12))
+    
+    if 'Heading2' not in styles:
+        styles.add(ParagraphStyle(name='Heading2', 
+                                fontName='Helvetica-Bold',
+                                fontSize=14, 
+                                spaceBefore=12,
+                                spaceAfter=6))
+    
+    # Or use custom style names to avoid conflicts
     custom_heading1 = ParagraphStyle(name='CustomHeading1', 
                                     parent=styles['Heading1'],
                                     fontSize=18, 
@@ -167,6 +181,9 @@ def generate_pdf_report(username, image, classification, analysis, enhanced=Fals
     
     # Title
     story.append(Paragraph("Medical Image Analysis Report", custom_heading1))
+    
+    # Classification
+    story.append(Paragraph("Image Classification", custom_heading2))
     story.append(Spacer(1, 12))
     
     # Date and user info
@@ -184,12 +201,12 @@ def generate_pdf_report(username, image, classification, analysis, enhanced=Fals
     story.append(Spacer(1, 12))
     
     # Classification
-    story.append(Paragraph("Image Classification", custom_heading2))
+    story.append(Paragraph("Image Classification", styles['Heading2']))
     story.append(Paragraph(f"Type: {classification}", styles['Normal']))
     story.append(Spacer(1, 6))
     
     # Analysis
-    story.append(Paragraph("Analysis Results", custom_heading2))
+    story.append(Paragraph("Analysis Results", styles['Heading2']))
     story.append(Paragraph(f"Findings: {analysis['findings']}", styles['Normal']))
     story.append(Paragraph(f"Recommendation: {analysis['recommendation']}", styles['Normal']))
     story.append(Paragraph(f"Confidence Score: {analysis['confidence']:.2f}", styles['Normal']))
@@ -241,14 +258,14 @@ def show_login_page():
                     st.session_state.logged_in = True
                     st.session_state.username = login_username
                     st.session_state.current_page = "dashboard"
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Invalid username or password")
         
         with col2:
             if st.button("Register"):
                 st.session_state.current_page = "register"
-                st.experimental_rerun()
+                st.rerun()
 
 def show_register_page():
     st.markdown("<h1 style='text-align: center;'>MediScan Quantum</h1>", unsafe_allow_html=True)
@@ -274,12 +291,12 @@ def show_register_page():
                     save_user(new_username, new_password)
                     st.success("Registration successful! You can now log in.")
                     st.session_state.current_page = "login"
-                    st.experimental_rerun()
+                    st.rerun()
         
         with col2:
             if st.button("Back to Login"):
                 st.session_state.current_page = "login"
-                st.experimental_rerun()
+                st.rerun()
 
 def show_dashboard():
     st.sidebar.title(f"Welcome, {st.session_state.username}")
@@ -299,7 +316,7 @@ def show_dashboard():
         st.session_state.logged_in = False
         st.session_state.username = ""
         st.session_state.current_page = "login"
-        st.experimental_rerun()
+        st.rerun()
 
 def show_upload_page():
     st.title("Upload & Analyze Medical Images")
